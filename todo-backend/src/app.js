@@ -4,12 +4,15 @@ import cookieParser from 'cookie-parser';
 import listRouter from "./routes/list.js";
 import todoRouter from "./routes/todo.js"
 import userRouter from "./routes/user.js"
-import { verifyToken } from './middleware/auth.js';
+
 
 const PORT = process.env.PORT;
-
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true
+};
 const app = express();
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -24,7 +27,7 @@ app.use("*", (req, res) => {
 
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).send(err);
+  res.status(500).send({error: err.message.split("\n").join("")});
 });
 
 app.listen(PORT, console.log(`Server running on port ${PORT}`));
