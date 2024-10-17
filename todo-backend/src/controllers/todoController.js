@@ -15,7 +15,12 @@ export const getTodo = [
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-      return res.status(400).json({success: false, errors: errors.array()});
+      return res.status(400).json({success: false, errors: errors.array().map((error) => {
+        return {
+          field: error.path,
+          error: error.msg
+        }
+      })});
     }
     const todoId = Number(req.params.id);
     const listId = Number(req.params.list_id);
@@ -31,7 +36,12 @@ export const addTodo = [
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-      return res.status(400).json({success: false, errors: errors.array()});
+      return res.status(400).json({success: false, errors: errors.array().map((error) => {
+        return {
+          field: error.path,
+          error: error.msg
+        }
+      })});
     }
     const todo = req.body;
     const listId = Number(req.params.list_id);
@@ -45,7 +55,12 @@ export const updateTodo = [
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-      return res.status(400).json({success: false, errors: errors.array()});
+      return res.status(400).json({success: false, errors: errors.array().map((error) => {
+        return {
+          field: error.path,
+          error: error.msg
+        }
+      })});
     }
     const todoId = Number(req.params.id);
     const listId = Number(req.params.list_id);
@@ -61,7 +76,12 @@ export const deleteTodo = [
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-      return res.status(400).json({success: false, errors: errors.array()});
+      return res.status(400).json({success: false, errors: errors.array().map((error) => {
+        return {
+          field: error.path,
+          error: error.msg
+        }
+      })});
     }
     const todoId = Number(req.params.id);
     const creatorId = req.user.user_id;
