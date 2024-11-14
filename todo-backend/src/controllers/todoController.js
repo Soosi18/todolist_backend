@@ -1,13 +1,13 @@
 import * as db from "../db/prisma_queries.js"
 import asyncHandler from "express-async-handler"
-import { validateTodo, validateId } from "../validators/validateTodo.js";
+import { validateTodoDescription, validateTodoStatus, validateId } from "../validators/validateTodo.js";
 import { validationResult } from "express-validator";
 
 export const getTodos = asyncHandler(async (req, res) => {
   const listId = Number(req.params.list_id);
   const creatorId = req.user.user_id;
   const todos = await db.getAllTodos(creatorId, listId);
-  res.json(todos);
+  res.json({success: true, content: todos});
 });
 
 export const getTodo = [
@@ -26,13 +26,13 @@ export const getTodo = [
     const listId = Number(req.params.list_id);
     const creatorId = req.user.user_id;
     const todo = await db.getTodoById(creatorId, listId, todoId);
-    res.json(todo);
+    res.json({success: true, content: todo});
   })
 ]
 
 
 export const addTodo = [
-  validateTodo,
+  validateTodoDescription,
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
@@ -45,13 +45,13 @@ export const addTodo = [
     }
     const todo = req.body;
     const listId = Number(req.params.list_id);
-    const addedRow = await db.createNewTodo(todo, listId);
-    res.json({success: true, message: "Todo successfully added!", data: addedRow});
+    const newTodo = await db.createNewTodo(todo, listId);
+    res.json({success: true, message: "Todo successfully added!", todo: newTodo});
   })
 ]
 
-export const updateTodo = [
-  validateId, validateTodo,
+export const updateTodoDescription = [
+  validateId, validateTodoDescription,
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
@@ -65,9 +65,30 @@ export const updateTodo = [
     const todoId = Number(req.params.id);
     const listId = Number(req.params.list_id);
     const creatorId = req.user.user_id;
-    const todo = req.body;
-    const updatedRow = await db.updateTodoById(todoId, listId, creatorId, todo);
-    res.json({success: true, message: "Todo successfully updated!", data: updatedRow});
+    const description = req.body.description;
+    const updatedRow = await db.updateTodoDescById(todoId, listId, creatorId, description);
+    res.json({success: true, message: "Task description successfully updated!", data: updatedRow});
+  })
+]
+
+export const updateTodoStatus = [
+  validateId, validateTodoStatus,
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      return res.status(400).json({success: false, errors: errors.array().map((error) => {
+        return {
+          field: error.path,
+          error: error.msg
+        }
+      })});
+    }
+    const todoId = Number(req.params.id);
+    const listId = Number(req.params.list_id);
+    const creatorId = req.user.user_id;
+    const status = req.body.is_complete;
+    const updatedRow = await db.updateTodoStatusById(todoId, listId, creatorId, status);
+    res.json({success: true, message: "Task status successfully updated!", data: updatedRow});
   })
 ]
 
