@@ -31,32 +31,29 @@ export const getAllUserLists = async(creatorId) => {
 }
 
 export const addNewList = async(listName, creatorId) => {
-  await prisma.list.create({
+  const newList = await prisma.list.create({
     data:{
       name: listName,
       creator_id: creatorId
     }
   });
+  return newList;
 }
 
 export const deleteList = async(creatorId, listId) => {
   await prisma.list.delete({
     where: {
-      AND:{
-        list_id: listId,
-        creator_id: creatorId
-      } 
+      list_id: listId,
+      creator_id: creatorId
     }
   });
 }
 
-export const updateListName = async(listId, newName) => {
+export const updateListName = async(creatorId, listId, newName) => {
   await prisma.list.update({
     where: {
-      AND: {
-        list_id: listId,
-        creator_id: creatorId
-      }
+      list_id: listId,
+      creator_id: creatorId
     },
     data: {name: newName}
   });
@@ -71,7 +68,7 @@ export const getAllTodos = async (creatorId, listId) => {
       },
       belongsToId: listId
     },
-    select: {description: true, is_complete: true}
+    orderBy: {todo_id: "asc"}
   });
   return todos;
 }
@@ -91,16 +88,30 @@ export const getTodoById = async (creatorId, listId, todoId) => {
 }
 
 export const createNewTodo = async(todo, listId) => {
-  await prisma.todo.create({
+  const newTodo = await prisma.todo.create({
     data: {
       description: todo.description,
-      is_complete: (todo.isComplete==='true'),
+      is_complete: false,
       belongsToId: listId
     }    
   });
+  return newTodo;
 }
 
-export const updateTodoById = async(todoId, listId, creatorId, todo) => {
+export const updateTodoDescById = async(todoId, listId, creatorId, description) => {
+  await prisma.todo.update({
+    where: {
+      belongsToId: listId,
+      todo_id: todoId,
+      belongs_to: { creator_id: creatorId }
+    },
+    data: {
+      description: description,
+    }
+  });
+}
+
+export const updateTodoStatusById = async(todoId, listId, creatorId, is_complete) => {
   await prisma.todo.update({
     where: {
       belongsToId: listId,
@@ -108,8 +119,7 @@ export const updateTodoById = async(todoId, listId, creatorId, todo) => {
       belongs_to: { creator_id: creatorId}
     },
     data: {
-      description: todo.description,
-      is_complete: (todo.isComplete==='true')
+      is_complete: (is_complete==='true')
     }
   });
 }
