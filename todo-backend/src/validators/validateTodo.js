@@ -1,11 +1,14 @@
 import { body, param } from 'express-validator'
 
-export const validateTodo = [
+export const validateTodoDescription = [
   body("description").trim().escape()
-    .isLength({min: 1, max: 255}).withMessage("Task character count must be between 1 and 255"),
-  body("isComplete").trim().toLowerCase()
+    .isLength({min: 1, max: 255}).withMessage("Task character count must be between 1 and 255")
+]
+
+export const validateTodoStatus = [
+  body("is_complete").trim().toLowerCase()
     .notEmpty().withMessage("Value cannot be empty")
-    .isBoolean({loose: false}).withMessage("Value must be true")
+    .isBoolean({loose: false}).withMessage("Value must be true/false")
 ]
 
 export const validateId = [
