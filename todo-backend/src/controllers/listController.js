@@ -6,7 +6,7 @@ import asyncHandler from "express-async-handler";
 export const getAllTodoLists = asyncHandler(async(req, res) => {
   const userId = req.user.user_id;
   const todoLists = await db.getAllUserLists(userId);
-  res.json(todoLists);  
+  res.json({success: true, content: todoLists});  
 })
 
 export const addNewTodoList = [
@@ -23,8 +23,8 @@ export const addNewTodoList = [
     }
     const listName = req.body.name;
     const creatorId = req.user.user_id;
-    await db.addNewList(listName, creatorId);
-    res.json({success: true, message: "List successfully added"});
+    const newList = await db.addNewList(listName, creatorId);
+    res.json({success: true, message: "List successfully added", list: newList});
   })
 ]
   
