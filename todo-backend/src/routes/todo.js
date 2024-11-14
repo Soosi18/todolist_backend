@@ -3,7 +3,8 @@ import {
   getTodos,
   getTodo,
   addTodo,
-  updateTodo,
+  updateTodoDescription,
+  updateTodoStatus,
   deleteTodo,
 } from "../controllers/todoController.js";
 
@@ -12,7 +13,8 @@ const router = express.Router({mergeParams: true});
 router.get("/", getTodos);
 router.get("/:id", getTodo);
 router.post("/", addTodo);
-router.put("/:id", updateTodo);
+router.put("/desc/:id", updateTodoDescription);
+router.put("/status/:id", updateTodoStatus);
 router.delete("/:id", deleteTodo);
 
 export default router;
