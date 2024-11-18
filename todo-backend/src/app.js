@@ -21,6 +21,9 @@ app.use("/user", userRouter);
 app.use("/list", listRouter);
 app.use("/list/:list_id/todo", todoRouter)
 
+app.use("/healthcheck", (req, res) => {
+  res.status(200).json({success: true});
+})
 app.use("*", (req, res) => {
   res.status(404).json({success: false, error: "Invalid Route"});
 })
