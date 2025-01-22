@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 export const verifyToken = (req, res, next) => {
   const authCookie = req.cookies['auth'];
   if (!authCookie){
-    return res.status(401).json({success: false, message: "User Authentication Failed"});
+    return res.status(401).json({success: false, message: "User Not Logged In"});
   } 
   jwt.verify(authCookie, process.env.SECRET_KEY, (err, user) => {
     if (err){
